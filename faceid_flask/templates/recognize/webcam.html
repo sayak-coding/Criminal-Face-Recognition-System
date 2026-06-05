@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Webcam{% endblock %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header flex justify-between align-center">
+  <div>
+    <div class="page-title">LIVE WEBCAM RECOGNITION</div>
+    <div class="page-sub">Real-time face identification from camera feed</div>
+  </div>
+  <a href="{{ url_for('recognize.upload') }}" class="btn btn-accent">📂 Switch to Upload</a>
+</div>
+
+<div class="recognize-grid">
+
+  <!-- ── LEFT ── -->
+  <div>
+    <div class="card mb-2">
+      <div class="card-header">
+        <span class="card-title">CAMERA FEED</span>
+        <span id="liveStatus" class="text-xs text-dim">● IDLE</span>
+      </div>
+      <div class="card-body">
+        <div class="image-box" style="position:relative" id="camBox">
+          <video id="webcamVideo" autoplay playsinline style="display:none"></video>
+          <canvas id="resultCanvas" style="display:none"></canvas>
+          <div class="image-placeholder" id="camPlaceholder">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>
+            </svg>
+            <div class="text-dim text-sm mt-2">Camera not started</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex gap-1 mb-2">
+      <button class="btn btn-accent" id="startBtn" onclick="startCamera()">📷 Start Camera</button>
+      <button class="btn btn-danger" id="stopBtn" onclick="stopCamera()" style="display:none">⏹ Stop Camera</button>
+    </div>
+
+    <!-- Detection list -->
+    <div class="card mb-2">
+      <div class="card-header">
+        <span class="card-title">DETECTION RESULT</span>
+        <span id="faceCountLabel" class="text-xs text-accent"></span>
+      </div>
+      <div class="card-body" id="detectionList">
+        <div class="text-dim text-sm" style="padding:8px 0">— No detection yet</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-cell"><div class="stat-label">MATCHED</div><div class="stat-value text-success" id="statMatched">0</div></div>
+      <div class="stat-cell"><div class="stat-label">UNKNOWN</div><div class="stat-value text-danger" id="statUnknown">0</div></div>
+      <div class="stat-cell"><div class="stat-label">FPS</div><div class="stat-value text-accent" id="statFps">0</div></div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT — Profile ── -->
+  <div>
+    <div class="card-header" style="background:var(--panel);border-radius:10px 10px 0 0;border:1px solid var(--border);border-bottom:none">
+      <span class="card-title">SUBJECT PROFILE</span>
+      <span id="profileBadge" class="text-xs text-dim">NO MATCH</span>
+    </div>
+    <div class="profile-card" id="profileCard" style="border-top-left-radius:0;border-top-right-radius:0;min-height:400px">
+      <div class="profile-idle">Awaiting recognition…</div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+{% endblock %}

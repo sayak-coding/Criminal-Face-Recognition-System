@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Person{% endblock %}
+
+{% block content %}
+<div class="page-header flex justify-between align-center">
+  <div>
+    <div class="page-title">{{ action.upper() }} PERSON</div>
+    <div class="page-sub">{{ 'Edit existing record' if action == 'Edit' else 'Add a new record to the database' }}</div>
+  </div>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-ghost">← Back</a>
+</div>
+
+<div style="max-width:720px">
+  <div class="card">
+    <div class="card-body">
+      <form method="POST">
+
+        <div class="form-group">
+          <label class="form-label">FULL NAME *</label>
+          <input class="form-control" type="text" name="name"
+                 value="{{ person.name if person else '' }}" required
+                 placeholder="e.g. Osama bin Laden" />
+          <div class="text-xs text-dim mt-1">Must exactly match the folder name in face_dataset/</div>
+        </div>
+
+        <div class="flex gap-2">
+          <div class="form-group" style="flex:1">
+            <label class="form-label">DATE OF BIRTH</label>
+            <input class="form-control" type="date" name="date_of_birth"
+                   value="{{ person.date_of_birth if person else '' }}" />
+          </div>
+          <div class="form-group" style="flex:1">
+            <label class="form-label">DATE OF DEATH</label>
+            <input class="form-control" type="date" name="date_of_death"
+                   value="{{ person.date_of_death if person else '' }}" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">STATUS</label>
+          <select class="form-control" name="status">
+            {% set statuses = [
+              'Active (Fugitive)',
+              'Active (At Large)',
+              'Not Active (Killed)',
+              'Not Active (Arrested)',
+              'Not Active (Deceased)',
+              'Unknown'
+            ] %}
+            {% for s in statuses %}
+            <option value="{{ s }}" {% if person and person.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">KEY ACTIVITIES</label>
+          <textarea class="form-control" name="activities"
+                    placeholder="One activity per line…" rows="8">{{ person.activities | join('\n') if person else '' }}</textarea>
+          <div class="text-xs text-dim mt-1">Enter one activity per line. Each line becomes a bullet point.</div>
+        </div>
+
+        <div class="flex gap-1 mt-2">
+          <button class="btn btn-primary" type="submit">
+            {{ '💾 Save Changes' if action == 'Edit' else '＋ Add Person' }}
+          </button>
+          <a href="{{ url_for('admin.dashboard') }}" class="btn btn-ghost">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

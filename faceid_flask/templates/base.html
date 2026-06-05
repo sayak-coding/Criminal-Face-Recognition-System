@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}FaceID{% endblock %} · Recognition System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────── -->
+{% if current_user.is_authenticated %}
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="accent">◈</span> CRIMINAL FACE RECOGNITION SYSTEM
+  </div>
+  <div class="nav-links">
+    <a href="{{ url_for('recognize.upload') }}" class="nav-link {% if request.blueprint == 'recognize' and request.endpoint == 'recognize.upload' %}active{% endif %}">
+      📂 Upload
+    </a>
+    <a href="{{ url_for('recognize.webcam') }}" class="nav-link {% if request.endpoint == 'recognize.webcam' %}active{% endif %}">
+      📷 Webcam
+    </a>
+    {% if current_user.is_admin() %}
+    <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if request.blueprint == 'admin' %}active{% endif %}">
+      ⚙ Admin
+    </a>
+    <a href="{{ url_for('auth.users') }}" class="nav-link {% if request.endpoint == 'auth.users' %}active{% endif %}">
+      👥 Users
+    </a>
+    {% endif %}
+  </div>
+  <div class="nav-right">
+    <span class="nav-user">
+      <span class="badge badge-{{ 'admin' if current_user.is_admin() else 'viewer' }}">
+        {{ current_user.role.upper() }}
+      </span>
+      {{ current_user.username }}
+    </span>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost btn-sm">Logout</a>
+  </div>
+</nav>
+{% endif %}
+
+<!-- ── FLASH MESSAGES ───────────────────────────────────────────────────── -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-container">
+    {% for category, message in messages %}
+    <div class="flash flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+<!-- ── MAIN ─────────────────────────────────────────────────────────────── -->
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

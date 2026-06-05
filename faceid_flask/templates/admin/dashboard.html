@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header flex justify-between align-center">
+  <div>
+    <div class="page-title">⚙ ADMIN DASHBOARD</div>
+    <div class="page-sub">Manage terrorist database records</div>
+  </div>
+  <div class="flex gap-1">
+    <form method="POST" action="{{ url_for('admin.reload_db') }}" style="display:inline">
+      <button class="btn btn-success btn-sm" type="submit">⟳ Reload Embeddings</button>
+    </form>
+    <a href="{{ url_for('admin.add_person_view') }}" class="btn btn-primary">＋ Add Person</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">PERSONS DATABASE — {{ persons|length }} RECORD{{ 'S' if persons|length != 1 }}</span>
+  </div>
+  <div class="card-body" style="padding:0;overflow-x:auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>NAME</th>
+          <th>DATE OF BIRTH</th>
+          <th>DATE OF DEATH</th>
+          <th>STATUS</th>
+          <th>ACTIVITIES</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in persons %}
+        <tr>
+          <td class="text-dim">{{ p.id }}</td>
+          <td style="font-weight:bold">{{ p.name }}</td>
+          <td class="text-dim">{{ p.date_of_birth or '—' }}</td>
+          <td class="text-dim">{{ p.date_of_death or '—' }}</td>
+          <td>
+            {% if 'active' in p.status.lower() and 'not' not in p.status.lower() %}
+              <span class="status-active">⚠ {{ p.status }}</span>
+            {% else %}
+              <span class="status-inactive">● {{ p.status }}</span>
+            {% endif %}
+          </td>
+          <td class="text-dim">{{ p.activities|length }}</td>
+          <td>
+            <div class="flex gap-1">
+              <a href="{{ url_for('admin.edit_person', person_id=p.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+              <form method="POST" action="{{ url_for('admin.delete_person_view', person_id=p.id) }}"
+                    onsubmit="return confirm('Delete {{ p.name }}?')">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align:center;padding:2rem;color:var(--dim)">
+            No records found. <a href="{{ url_for('admin.add_person_view') }}">Add the first person →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

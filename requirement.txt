@@ -1,0 +1,26 @@
+# ─────────────────────────────────────────
+#  Face Recognition System — Requirements
+#  Install: pip install -r requirements.txt
+# ─────────────────────────────────────────
+
+# Core face recognition
+deepface==0.0.93
+tf-keras>=2.0.0         # DeepFace backend (TensorFlow/Keras)
+
+# Computer vision
+opencv-python>=4.8.0
+
+# Numerical computing
+numpy>=1.24.0
+
+# GUI
+customtkinter>=5.2.0
+
+# Image processing
+Pillow>=10.0.0
+
+requests>=2.31.0
+icrawler>=0.6.6
+opencv-python>=4.9.0
+Pillow>=10.0.0
+tqdm>=4.66.0
